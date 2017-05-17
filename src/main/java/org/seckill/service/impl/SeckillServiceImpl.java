@@ -2,6 +2,7 @@ package org.seckill.service.impl;
 
 import org.seckill.dao.SeckillDao;
 import org.seckill.dao.SuccessKilledDao;
+import org.seckill.dao.cache.RedisDao;
 import org.seckill.dto.Exposer;
 import org.seckill.dto.SeckillExecution;
 import org.seckill.entity.Seckill;
@@ -38,6 +39,9 @@ public class SeckillServiceImpl implements SeckillService{
     @Autowired
     private SuccessKilledDao successKilledDao;
 
+    @Autowired
+    private RedisDao redisDao;
+
     //用于生成MD5
     private final String salt = "GHGFTIHyfyfuyb56790";
 
@@ -50,7 +54,20 @@ public class SeckillServiceImpl implements SeckillService{
     }
 
     public Exposer exportSeckillUrl(long seckillId) {
-        Seckill seckill = seckillDao.queryById(seckillId);
+        //缓存优化 从redis缓存中取，超时的基础上维护一致性
+        //原：从mysql取的  Seckill seckill = seckillDao.queryById(seckillId);
+        Seckill seckill = redisDao.getSeckill(seckillId);
+        if(seckill == null){
+            //redis缓存中不存在，访问数据库
+            seckill = seckillDao.queryById(seckillId);
+            if(seckill == null){
+                //秒杀产品不存在
+                return new Exposer(false, seckillId);
+            }else{
+                //秒杀产品存在，放入redis缓存中
+                redisDao.setSeckill(seckill);
+            }
+        }
 
         if(seckill == null){
             //没有该产品的秒杀活动
