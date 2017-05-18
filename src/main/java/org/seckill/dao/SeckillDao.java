@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2017/5/7.
@@ -40,4 +41,6 @@ public interface SeckillDao {
      */
     //List<Seckill> queryAll(int offset, int limit);
     List<Seckill> queryAll(@Param("offset") int offset,@Param("limit") int limit);
+
+    void killByProcedure(Map<String, Object> map);
 }

@@ -45,7 +45,7 @@ public class SeckillServiceTest {
 
     }
 
-    //²âÊÔ´úÂëÍêÕûÂß¼­£¬¿ÉÖØ¸´Ö´ÐÐ
+    //ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½Ö´ï¿½ï¿½
     @Test
     public void testExportSeckillUrl() throws Exception {
         long id = 1;
@@ -80,5 +80,19 @@ public class SeckillServiceTest {
         }catch (RepeatKillException e){
             logger.error(e.getMessage());
         }
+    }
+
+    @Test
+    public void executeSeckillProcedure(){
+        long seckillId = 1;
+        long phone = 13212322233L;
+        Exposer exposer = seckillService.exportSeckillUrl(seckillId);
+        if(exposer.getExposed()){
+            String md5 = exposer.getMd5();
+            SeckillExecution seckillExecution = seckillService.executeSeckillProcedure(seckillId, phone, md5);
+            System.out.println(seckillExecution);
+        }
+
+
     }
 }
