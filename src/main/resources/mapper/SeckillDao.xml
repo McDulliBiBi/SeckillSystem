@@ -26,13 +26,13 @@
     </select>
 
     <!-- mybatis调用存储过程-->
-    <select id="killByProcedure" statementType="CALLABLE">
-        call execute_seckill(
+    <select id="killByProcedure" statementType="CALLABLE" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        { call execute_seckill(
         #{seckillId, jdbcType=BIGINT,mode=IN },
         #{phone, jdbcType=BIGINT,mode=IN },
         #{killTime, jdbcType=TIMESTAMP, mode=IN },
-        #{result, jdbcType=BIGINT,mode=OUT },
-        )
+        #{result, jdbcType=BIGINT,mode=OUT }
+        )}
 
     </select>
 </mapper>
